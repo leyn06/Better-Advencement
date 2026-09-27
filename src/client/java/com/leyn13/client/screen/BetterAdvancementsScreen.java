@@ -138,9 +138,10 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 					applyFilters();
 				}).bounds(px + 214, py + HEADER_H + 4, 110, 20).build());
 
-		sortButton = CycleButton.<SortMode>builder(mode -> Component.literal(mode.label()), SortMode.DEFAULT)
-				.displayOnlyValue()
+		sortButton = CycleButton.<SortMode>builder(mode -> Component.literal(mode.label()))
 				.withValues(SortMode.values())
+				.withInitialValue(sortMode)
+				.displayOnlyValue()
 				.create(px + pw - 148, py + HEADER_H + 4, 140, 20, Component.literal("Tri"),
 						(button, mode) -> {
 							sortMode = mode;
