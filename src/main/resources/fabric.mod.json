@@ -1,31 +1,30 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "betteradvancements",
 	"version": "${version}",
-	"name": "Example Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Better Advancements",
+	"description": "Une meilleure interface pour les progrès : pagination, recherche et progression.",
 	"authors": [
-		"Me!"
+		"leyn06"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/leyn06/Better-Advencement"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
-	"environment": "*",
+	"icon": "assets/betteradvancements/icon.png",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.leyn13.BetterAdvancements"
 		],
 		"client": [
-			"com.example.client.ExampleModClient"
+			"com.leyn13.client.BetterAdvancementsClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"betteradvancements.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "betteradvancements.client.mixins.json",
 			"environment": "client"
 		}
 	],
