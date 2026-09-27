@@ -1,29 +1,36 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "betteradvancements",
 	"version": "${version}",
-	"name": "Example Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Better Advancements",
+	"description": "Un écran des progrès amélioré : pagination, recherche, tri et barres de progression.",
 	"authors": [
 		"Me!"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/leyn06/Better-Advencement"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/betteradvancements/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.leyn13.BetterAdvancements"
+		],
+		"client": [
+			"com.leyn13.client.BetterAdvancementsClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json"
+		"betteradvancements.mixins.json",
+		{
+			"config": "betteradvancements.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
-		"fabricloader": ">=0.19.5",
+		"fabricloader": ">=0.14.0",
 		"minecraft": "~1.18.2",
 		"java": ">=17",
 		"fabric-api": "*"
