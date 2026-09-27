@@ -1,4 +1,4 @@
-package com.example;
+package com.leyn13;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ExampleMod implements ModInitializer {
+public class BetterAdvancements implements ModInitializer {
 	public static final String MOD_ID = "modid";
 
 	// This logger is used to write text to the console and the log file.
