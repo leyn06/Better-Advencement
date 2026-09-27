@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementProgress;
@@ -37,6 +35,10 @@ import net.minecraft.world.item.ItemStack;
  * - Navigation clavier (flèches) et molette
  */
 public class BetterAdvancementsScreen extends Screen implements ClientAdvancements.Listener {
+
+	// Codes clavier GLFW stables (flèches gauche/droite)
+	private static final int KEYCODE_LEFT = 263;
+	private static final int KEYCODE_RIGHT = 262;
 
 	// ===== Palette =====
 	private static final int COLOR_PANEL = 0xF0101826;
@@ -68,7 +70,6 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 	private static final int COLUMNS = 2;
 
 	private final ClientAdvancements clientAdvancements;
-	private final Map<AdvancementHolder, AdvancementProgress> progress = new HashMap<>();
 
 	private final List<AdvancementEntry> allEntries = new ArrayList<>();
 	private final List<AdvancementNode> categories = new ArrayList<>();
@@ -158,40 +159,13 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 	// =====================================================================
 
 	@Override
-	public void onAddAdvancementRoot(AdvancementNode node) {
+	public void onAdvancementsUpdated() {
 		rebuildEntries();
-		applyFilters();
-	}
-
-	@Override
-	public void onRemoveAdvancementRoot(AdvancementNode node) {
-		rebuildEntries();
-		applyFilters();
-	}
-
-	@Override
-	public void onAddAdvancementTask(AdvancementNode node) {
-		rebuildEntries();
-		applyFilters();
-	}
-
-	@Override
-	public void onRemoveAdvancementTask(AdvancementNode node) {
-		rebuildEntries();
-		applyFilters();
-	}
-
-	@Override
-	public void onUpdateAdvancementProgress(AdvancementNode node, AdvancementProgress prog) {
-		if (node != null && prog != null) {
-			progress.put(node.holder(), prog);
-		}
 		applyFilters();
 	}
 
 	@Override
 	public void onAdvancementsCleared() {
-		progress.clear();
 		rebuildEntries();
 		applyFilters();
 	}
@@ -204,24 +178,24 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 	private void rebuildEntries() {
 		allEntries.clear();
 		categories.clear();
-		AdvancementTree tree = clientAdvancements.getTree();
+		AdvancementTree tree = clientAdvancements.tree();
 		if (tree == null) {
 			return;
 		}
 		for (AdvancementNode root : tree.roots()) {
 			DisplayInfo display = displayOf(root);
-			if (display != null && !display.isHidden()) {
+			if (display != null && !display.hidden()) {
 				categories.add(root);
 			}
 		}
 		for (AdvancementNode node : tree.nodes()) {
 			DisplayInfo display = displayOf(node);
-			if (display == null || display.isHidden()) {
+			if (display == null || display.hidden()) {
 				continue;
 			}
-			ItemStack icon = display.getIcon().apply(display.getIcon().count(), display.getIcon().components());
-			allEntries.add(new AdvancementEntry(node, display.getTitle(), display.getDescription(),
-					display.getType(), icon, node.root()));
+			ItemStack icon = display.icon().apply(display.icon().count(), display.icon().components());
+			allEntries.add(new AdvancementEntry(node, display.title(), display.description(),
+					display.type(), icon, node.root()));
 		}
 	}
 
@@ -282,12 +256,12 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 	}
 
 	private boolean isDone(AdvancementEntry entry) {
-		AdvancementProgress prog = progress.get(entry.node().holder());
+		AdvancementProgress prog = clientAdvancements.progress().get(entry.node().holder());
 		return prog != null && prog.isDone();
 	}
 
 	private float percentOf(AdvancementEntry entry) {
-		AdvancementProgress prog = progress.get(entry.node().holder());
+		AdvancementProgress prog = clientAdvancements.progress().get(entry.node().holder());
 		return prog == null ? 0.0f : prog.getPercent();
 	}
 
@@ -415,7 +389,7 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 		for (int i = categoryScroll; i < categories.size(); i++) {
 			AdvancementNode root = categories.get(i);
 			DisplayInfo display = displayOf(root);
-			String label = display == null ? "?" : display.getTitle().getString();
+			String label = display == null ? "?" : display.title().getString();
 			int cw = Math.min(this.font.width(label) + 12, 120);
 			if (cx + cw > x + w - 26) {
 				break;
@@ -522,7 +496,7 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 				List<Component> lines = new ArrayList<>();
 				lines.add(entry.title());
 				lines.add(entry.description());
-				AdvancementProgress prog = progress.get(entry.node().holder());
+				AdvancementProgress prog = clientAdvancements.progress().get(entry.node().holder());
 				if (prog != null && !prog.isDone() && prog.hasProgress()) {
 					lines.add(prog.getProgressText());
 				}
@@ -582,11 +556,11 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 		if (searchBox != null && searchBox.isFocused()) {
 			return super.keyPressed(event);
 		}
-		if (event.key() == GLFW.GLFW_KEY_LEFT) {
+		if (event.key() == KEYCODE_LEFT) {
 			goToPage(page - 1);
 			return true;
 		}
-		if (event.key() == GLFW.GLFW_KEY_RIGHT) {
+		if (event.key() == KEYCODE_RIGHT) {
 			goToPage(page + 1);
 			return true;
 		}
