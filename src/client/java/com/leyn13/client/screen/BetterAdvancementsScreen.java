@@ -65,7 +65,8 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 	private static final int BOTTOM_H = 40;
 	private static final int CARD_H = 50;
 	private static final int GAP = 6;
-	private static final int COLUMNS = 2;
+	private static final int CARD_MIN_W = 210;
+	private static final int MAX_COLUMNS = 4;
 
 	private final ClientAdvancements clientAdvancements;
 	private final Map<AdvancementHolder, AdvancementProgress> progress = new HashMap<>();
@@ -291,10 +292,16 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 		return prog == null ? 0.0f : prog.getPercent();
 	}
 
+	private int columns() {
+		int gw = panelWidth() - 16;
+		int cols = (gw + GAP) / (CARD_MIN_W + GAP);
+		return Math.min(MAX_COLUMNS, Math.max(2, cols));
+	}
+
 	private int pageSize() {
 		int gridH = panelHeight() - GRID_TOP - BOTTOM_H;
 		int rows = Math.max(1, (gridH + GAP) / (CARD_H + GAP));
-		return Math.max(1, rows * COLUMNS);
+		return Math.max(1, rows * columns());
 	}
 
 	private int pageCount() {
@@ -447,7 +454,8 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 		int gy = y + GRID_TOP;
 		int gw = w - 16;
 		int gridH = panelHeight() - GRID_TOP - BOTTOM_H;
-		int cardW = (gw - GAP * (COLUMNS - 1)) / COLUMNS;
+		int columns = columns();
+		int cardW = (gw - GAP * (columns - 1)) / columns;
 
 		if (visible.isEmpty()) {
 			String message = allEntries.isEmpty() ? "Aucun progrès dans ce monde" : "Aucun progrès trouvé";
@@ -468,8 +476,8 @@ public class BetterAdvancementsScreen extends Screen implements ClientAdvancemen
 				break;
 			}
 			AdvancementEntry entry = visible.get(index);
-			int col = i % COLUMNS;
-			int row = i / COLUMNS;
+			int col = i % columns;
+			int row = i / columns;
 			int cx = gx + col * (cardW + GAP);
 			int cy = gy + row * (CARD_H + GAP);
 
