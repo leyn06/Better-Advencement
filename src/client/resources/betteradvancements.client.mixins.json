@@ -3,7 +3,9 @@
 	"package": "com.leyn13.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin"
+		"ExampleClientMixin",
+		"ToastManagerMixin",
+		"AdvancementToastAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
