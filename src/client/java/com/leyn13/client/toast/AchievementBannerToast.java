@@ -42,6 +42,7 @@ public class AchievementBannerToast implements Toast {
 	private long startTime = -1L;
 	private boolean finished = false;
 	private float progress = 0f;
+	private long displayDuration = DISPLAY_MS;
 
 	public AchievementBannerToast(AdvancementHolder holder) {
 		Advancement advancement = holder.value();
@@ -67,15 +68,16 @@ public class AchievementBannerToast implements Toast {
 	public void update(ToastManager toastManager, long now) {
 		if (startTime < 0) {
 			startTime = now;
+			displayDuration = Math.max(0L, (long) (DISPLAY_MS * toastManager.getNotificationDisplayTimeMultiplier()));
 		}
-		long elapsed = now - startTime;
+		long elapsed = Math.max(0L, now - startTime);
 
 		if (elapsed < ANIM_MS) {
 			progress = ease(elapsed / (float) ANIM_MS);
-		} else if (elapsed < ANIM_MS + DISPLAY_MS) {
+		} else if (elapsed < ANIM_MS + displayDuration) {
 			progress = 1f;
-		} else if (elapsed < ANIM_MS * 2 + DISPLAY_MS) {
-			float t = (elapsed - ANIM_MS - DISPLAY_MS) / (float) ANIM_MS;
+		} else if (elapsed < ANIM_MS * 2 + displayDuration) {
+			float t = (elapsed - ANIM_MS - displayDuration) / (float) ANIM_MS;
 			progress = 1f - ease(t);
 		} else {
 			progress = 0f;
@@ -105,7 +107,7 @@ public class AchievementBannerToast implements Toast {
 
 	@Override
 	public int occcupiedSlotCount() {
-		return 1;
+		return (HEIGHT + 31) / 32;
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class AchievementBannerToast implements Toast {
 
 	@Override
 	public float yPos(int slotIndex) {
-		float baseY = 6 + slotIndex * (height() + 4);
+		float baseY = 6 + slotIndex * 32;
 		return baseY - (height() + 10) * (1f - progress);
 	}
 
@@ -145,7 +147,15 @@ public class AchievementBannerToast implements Toast {
 		int textX = x + 32;
 		String label = challenge ? "\u2726 Défi terminé !" : "\u2726 Progrès débloqué !";
 		g.text(font, label, textX, y + 7, withAlpha(challenge ? COLOR_LABEL_CHALLENGE : COLOR_LABEL, alpha), false);
-		g.text(font, title, textX, y + 19, withAlpha(COLOR_TITLE, alpha), false);
+		int availableWidth = WIDTH - textX - 8;
+		if (font.width(title) <= availableWidth) {
+			g.text(font, title, textX, y + 19, withAlpha(COLOR_TITLE, alpha), false);
+		} else {
+			String ellipsis = "…";
+			String shortTitle = font.plainSubstrByWidth(title.getString(),
+					Math.max(0, availableWidth - font.width(ellipsis))) + ellipsis;
+			g.text(font, shortTitle, textX, y + 19, withAlpha(COLOR_TITLE, alpha), false);
+		}
 	}
 
 	private static int withAlpha(int argb, int alpha) {

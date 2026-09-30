@@ -23,8 +23,9 @@ achievement banner.
 ## Install
 
 1. Install the [Fabric Loader](https://fabricmc.net/use/) for your Minecraft version.
-2. Drop the mod jar into your `mods` folder.
-3. Open the Advancements screen (press `L` by default).
+2. Install [Fabric API](https://modrinth.com/mod/fabric-api) for the same Minecraft version.
+3. Drop the mod jar into your `mods` folder.
+4. Open the Advancements screen (press `L` by default).
 
 ## Building from source
 

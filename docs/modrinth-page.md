@@ -27,6 +27,11 @@ with a golden border for challenges.
   on servers.
 - Works with modded advancements from other mods.
 
+## Installation
+
+Install Fabric Loader and Fabric API for your Minecraft version, then put the mod
+jar in your `mods` folder. Press `L` (default key) to open the advancement browser.
+
 ## Screenshots
 
 (Screenshots to be added)
